@@ -1,0 +1,11 @@
+# Type dvc-help in this file and hit enter to get more information on how the extension can help to setup pipelines
+stages:
+  train:
+    cmd: python run.py
+    deps:
+    - run.py
+metrics:
+- dvclive/metrics.json
+plots:
+- dvclive/plots/metrics:
+    x: step
