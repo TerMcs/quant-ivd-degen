@@ -1,9 +1,53 @@
 schema: '2.0'
 stages:
   train:
-    cmd: python run.py
+    cmd: python src/train.py
     deps:
-    - path: run.py
+    - path: data/dev_set_prepared.pkl
       hash: md5
-      md5: 0030fe5ad357a939836b3983f9b9b876
-      size: 913
+      md5: a29a83c819870336a8c0f0e247a7e29e
+      size: 3537982
+    - path: data/test_set_prepared.pkl
+      hash: md5
+      md5: c3c8fd8b95b6fbf2765afc461ec4743b
+      size: 779937
+    - path: src/train.py
+      hash: md5
+      md5: 366bfcde7f8b83f6c1a8be30b6f5197b
+      size: 6232
+    params:
+      params.yaml:
+        train.cost: 2
+        train.model: pca_svm
+        train.n_components: 25
+        train.save_model: false
+        train.svm_gamma: 0.0001
+        train.test: true
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+    - path: src/prepare.py
+      hash: md5
+      md5: 1195fc8e874c572b27d976d10d6e1e93
+      size: 7607
+    params:
+      params.yaml:
+        prepare.binwidth: 16
+        prepare.correlation_threshold: 0
+        prepare.data_file: ../data/NFBC/radiomics/ivd/no_rotation/joined.pkl
+        prepare.dev_ids: data/ivd_dev_set_project_ids.txt
+        prepare.feature_set: radiomics_only
+        prepare.icc_cut_off: 0.95
+        prepare.icc_results: ../data/NFBC/radiomics/icc_results_ivd_all_features.csv
+        prepare.resampling: '0270'
+        prepare.test_ids: data/ivd_test_set_project_ids.txt
+        prepare.variance_threshold: 0.0001
+    outs:
+    - path: data/dev_set_prepared.pkl
+      hash: md5
+      md5: a29a83c819870336a8c0f0e247a7e29e
+      size: 3537982
+    - path: data/test_set_prepared.pkl
+      hash: md5
+      md5: c3c8fd8b95b6fbf2765afc461ec4743b
+      size: 779937

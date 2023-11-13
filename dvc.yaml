@@ -1,11 +1,38 @@
 # Type dvc-help in this file and hit enter to get more information on how the extension can help to setup pipelines
 stages:
-  train:
-    cmd: python run.py
+  prepare:
+    cmd: python src/prepare.py
     deps:
-    - run.py
-metrics:
-- dvclive/metrics.json
+    - src/prepare.py
+    params:
+    - prepare.data_file
+    - prepare.dev_ids
+    - prepare.test_ids
+    - prepare.icc_results
+    - prepare.resampling
+    - prepare.binwidth
+    - prepare.icc_cut_off
+    - prepare.feature_set
+    - prepare.variance_threshold
+    - prepare.correlation_threshold
+    outs:
+    - data/dev_set_prepared.pkl
+    - data/test_set_prepared.pkl
+  train:
+    cmd: python src/train.py
+    deps:
+    - data/dev_set_prepared.pkl
+    - data/test_set_prepared.pkl
+    - src/train.py
+    params:
+    - train.test
+    - train.save_model
+    - train.model
+    - train.n_components
+    - train.cost
+    - train.svm_gamma
 plots:
 - dvclive/plots/metrics:
     x: step
+metrics:
+- dvclive/metrics.json
