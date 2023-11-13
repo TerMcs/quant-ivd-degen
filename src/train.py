@@ -117,16 +117,7 @@ def train_model(X, y, params):
 
     pipeline = make_pipeline(params)
 
-    if params['test']:
-        if params['model'] == 'pls':
-            y = prepare_y_for_pls(y)
-            pipeline.fit(X, y)
-            scores = None
-        else: 
-            pipeline.fit(X, y)
-            scores = None
-
-    elif params['model'] == 'pls':
+    if params['model'] == 'pls':
         y = prepare_y_for_pls(y)
         scorers = get_scorers()
         scores = cross_validate(pipeline, X, y, cv=5, scoring=scorers)
@@ -139,27 +130,7 @@ def train_model(X, y, params):
         scores.pop('fit_time')
         scores.pop('score_time')
 
-    return scores, pipeline
-
-
-def test_model(X_test, y_test, pipeline, params):
-
-    y_pred = pipeline.predict(X_test)
-
-    if params['model'] == 'pls':
-        y_pred = y_pred + 2
-
-    # save the predictions for evaluations:
-    df = pd.DataFrame({'y_true': y_test, 'y_pred': y_pred})
-    df.to_csv('data/predictions.csv', index=False)
-
-    print(f'Accuracy: {accuracy_score(y_test, y_pred)}')
-    print(f'Balanced Accuracy: {balanced_accuracy_score(y_test, y_pred)}')
-    print(f'Cohen Kappa: {cohen_kappa_score(y_test, y_pred)}')
-
-    if params['save_model']:
-        with open('data/model.pkl', 'wb') as f:
-            pickle.dump(pipeline, f)
+    return scores
 
 
 def main():
@@ -167,15 +138,11 @@ def main():
     params = yaml.safe_load(open("params.yaml"))["train"]
 
     X_train, y_train = load_data('data/dev_set_prepared.pkl')
-    scores, pipeline = train_model(X_train, y_train, params) # if params['test'] is True, the model will be trained on the whole dev dataset
+    scores = train_model(X_train, y_train, params) # if params['test'] is True, the model will be trained on the whole dev dataset
     
-    if params['test']:
-        X_test, y_test = load_data('data/test_set_prepared.pkl')
-        test_model(X_test, y_test, pipeline, params) # this will save a csv file of the model predictions on the test set, which can be input for evaluate.py
-    else:
-        with Live(save_dvc_exp=True) as live: # in the development stage the results are added to dvclive so that they can be tracked
-            for scorer_name, scorer_scores in scores.items():
-                live.log_metric(f"{scorer_name}", scorer_scores.mean())
+    with Live(save_dvc_exp=True) as live: # in the development stage the results are added to dvclive so that they can be tracked
+        for scorer_name, scorer_scores in scores.items():
+            live.log_metric(f"{scorer_name}", scorer_scores.mean())
 
 if __name__ == "__main__":
     main()

@@ -25,12 +25,20 @@ stages:
     - data/test_set_prepared.pkl
     - src/train.py
     params:
-    - train.test
-    - train.save_model
     - train.model
     - train.n_components
     - train.cost
     - train.svm_gamma
+  test:
+    cmd: python src/test.py
+    deps:
+    - data/dev_set_prepared.pkl
+    - data/test_set_prepared.pkl
+    - src/test.py
+    params:
+    - test.test
+    - test.save_artifacts
+    - test.test_results_directory
 plots:
 - dvclive/plots/metrics:
     x: step

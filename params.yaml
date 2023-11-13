@@ -10,10 +10,12 @@ prepare:
   variance_threshold: 0.0001
   correlation_threshold: 0
 train:
-  test: True # doesn't run any experiments, just uses the saved model for inference when set to True. Saves the predictions as a csv for further evaluation. 
-  save_model: False
   model: pca_svm # svm, pca_svm, pls, lr
   n_components: 25
   cost: 2
   svm_gamma: 0.0001
+test:
+  test: True # doesn't run any experiments, just uses the saved model for inference when set to True. Saves the predictions as a csv for further evaluation. 
+  save_artifacts: True
+  test_results_directory: 'test_results'
 

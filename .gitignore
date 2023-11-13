@@ -1,5 +1,4 @@
 data/
-src/test.py
 dvclive/
 src/split_data.R
 prepare_data.ipynb

@@ -13,16 +13,14 @@ stages:
       size: 779937
     - path: src/train.py
       hash: md5
-      md5: 366bfcde7f8b83f6c1a8be30b6f5197b
-      size: 6232
+      md5: e494c638b0a558f640b74198b07129f5
+      size: 5095
     params:
       params.yaml:
         train.cost: 2
         train.model: pca_svm
         train.n_components: 25
-        train.save_model: false
         train.svm_gamma: 0.0001
-        train.test: true
   prepare:
     cmd: python src/prepare.py
     deps:
