@@ -5,12 +5,12 @@ stages:
     deps:
     - path: data/dev_set_prepared.pkl
       hash: md5
-      md5: 566eb9df3d6aa173772fd55f5f476388
-      size: 3629255
+      md5: a29a83c819870336a8c0f0e247a7e29e
+      size: 3537982
     - path: data/test_set_prepared.pkl
       hash: md5
-      md5: a7b4632460d50047ccbe8938d5a4980c
-      size: 800026
+      md5: c3c8fd8b95b6fbf2765afc461ec4743b
+      size: 779937
     - path: src/train.py
       hash: md5
       md5: f82aed742bbc95eeec3490c59315a29b
@@ -56,12 +56,12 @@ stages:
     deps:
     - path: data/dev_set_prepared.pkl
       hash: md5
-      md5: 566eb9df3d6aa173772fd55f5f476388
-      size: 3629255
+      md5: a29a83c819870336a8c0f0e247a7e29e
+      size: 3537982
     - path: data/test_set_prepared.pkl
       hash: md5
-      md5: a7b4632460d50047ccbe8938d5a4980c
-      size: 800026
+      md5: c3c8fd8b95b6fbf2765afc461ec4743b
+      size: 779937
     - path: src/test.py
       hash: md5
       md5: e2270e1039a8406ed0d96d64497570e3
@@ -79,7 +79,7 @@ stages:
         data.correlation_threshold: 0
         data.data_file: ../data/NFBC/radiomics/ivd/no_rotation/joined.pkl
         data.dev_ids: data/ivd_dev_set_project_ids.txt
-        data.feature_set: radiomics_dhi_dpsi
+        data.feature_set: radiomics_only
         data.icc_cut_off: 0.95
         data.icc_results: ../data/NFBC/radiomics/icc_results_ivd_all_features.csv
         data.resampling: '0270'
@@ -89,9 +89,9 @@ stages:
     outs:
     - path: data/dev_set_prepared.pkl
       hash: md5
-      md5: 566eb9df3d6aa173772fd55f5f476388
-      size: 3629255
+      md5: a29a83c819870336a8c0f0e247a7e29e
+      size: 3537982
     - path: data/test_set_prepared.pkl
       hash: md5
-      md5: a7b4632460d50047ccbe8938d5a4980c
-      size: 800026
+      md5: c3c8fd8b95b6fbf2765afc461ec4743b
+      size: 779937
