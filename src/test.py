@@ -125,14 +125,10 @@ def concordance_correlation_coefficient(y_true, y_pred):
     return numerator / denominator
 
 
-def test_model(X_test, y_test, pipeline, params):
-
-    y_pred = pipeline.predict(X_test)
+def test_model(y_test, y_pred, params):
 
     if params['model'] == 'pls':
-        y_pred = y_pred + 2
-
-    feature_sets = ['radiomics_dhi_dpsi', 'radiomics_only', 'dhi_dpsi_only']
+        y_pred = y_pred + 2  # in order to match Pfirrmann grading scale
 
     dfs = []
 
@@ -150,43 +146,41 @@ def test_model(X_test, y_test, pipeline, params):
             'Recall': recall_score,
             }
     
-    for feature_set in feature_sets:
+    evaluation_results = {}
 
-        evaluation_results = {}
+    for name, score in metrics_multiclass.items():
+        print(f'Computing {name}')
+        p_value, metric_val, ci_l, ci_h = bootstrap_test(score, y_test, y_pred, null_hypothesis=0.5, n_bootstrap=1000)
+        evaluation_results[name] = [metric_val, ci_l, ci_h, p_value]
 
-        for name, score in metrics_multiclass.items():
-            print(f'Computing {name}')
-            p_value, metric_val, ci_l, ci_h = bootstrap_test(score, y_test, y_pred, null_hypothesis=0.5, n_bootstrap=1000)
-            evaluation_results[name] = [metric_val, ci_l, ci_h, p_value, feature_set]
-
-        evaluation_results = pd.DataFrame.from_dict(evaluation_results, orient='index', columns=['Metric Value', 'CI Lower', 'CI Upper', 'p-value', 'Feature Set'])
-        
-        for name, score in metrics_averaged.items():
-            for avg in ['macro', 'micro']:
-                print(f'Computing {name} ({avg})')
-                p_value, metric_val, ci_l, ci_h = bootstrap_test(score, y_test, y_pred, null_hypothesis=0.5, n_bootstrap=1000, metric_average=avg)
-                evaluation_results.loc[f'{name} ({avg})'] = [metric_val, ci_l, ci_h, p_value, feature_set]
-        
-        dfs.append(evaluation_results)
+    evaluation_results = pd.DataFrame.from_dict(evaluation_results, orient='index', columns=['Metric Value', 'CI Lower', 'CI Upper', 'p-value'])
+    
+    for name, score in metrics_averaged.items():
+        for avg in ['macro', 'micro']:
+            print(f'Computing {name} ({avg})')
+            p_value, metric_val, ci_l, ci_h = bootstrap_test(score, y_test, y_pred, null_hypothesis=0.5, n_bootstrap=1000, metric_average=avg)
+            evaluation_results.loc[f'{name} ({avg})'] = [metric_val, ci_l, ci_h, p_value]
+    
+    dfs.append(evaluation_results)
 
     metrics_df = pd.concat(dfs, axis=0)
 
-    return y_pred, metrics_df
+    return metrics_df
 
 
 def save_artifacts(y_test, y_pred, metrics_df, pipeline, params):
 
     # check if data/test_results_dir exists, if not create it:
-    if not os.path.exists(f'data/{params["test_results_directory"]}'):
-        os.makedirs(f'data/{params["test_results_directory"]}')
+    if not os.path.exists(f'data/test_results/{params["feature_set"]}'):
+        os.makedirs(f'data/test_results/{params["feature_set"]}')
 
     # save the predictions for evaluations:
     predictions_df = pd.DataFrame({'y_true': y_test, 'y_pred': y_pred})
-    predictions_df.to_csv(f'data/{params["test_results_directory"]}/predictions.csv', index=False)
+    predictions_df.to_csv(f'data/test_results/{params["feature_set"]}/predictions.csv', index=False)
 
-    metrics_df.to_csv(f'data/{params["test_results_directory"]}/metrics.csv')
+    metrics_df.to_csv(f'data/test_results/{params["feature_set"]}/metrics.csv')
 
-    with open(f'data/{params["test_results_directory"]}/model.pkl', 'wb') as f:
+    with open(f'data/test_results/{params["feature_set"]}/model.pkl', 'wb') as f:
         pickle.dump(pipeline, f)
 
 
@@ -194,22 +188,33 @@ def main():
 
     params = yaml.safe_load(open("params.yaml"))["train"]
 
-    X_train, y_train = load_data('data/dev_set_prepared.pkl')
-    pipeline = train_model(X_train, y_train, params) # if params['test'] is True, the model will be trained on the whole dev dataset
+    if params['test']:
+        X_train, y_train = load_data('data/dev_set_prepared.pkl')
+        pipeline = train_model(X_train, y_train, params) # if params['test'] is True, the model will be trained on the whole dev dataset
+        
+        X_test, y_test = load_data('data/test_set_prepared.pkl')
+
+        # reset the indices to avoid problems with the bootstrap test:
+        X_test = X_test.reset_index(drop=True)
+        y_test = y_test.reset_index(drop=True)  
+
+        y_pred = pipeline.predict(X_test)
+
+        metrics_df = test_model(y_test, y_pred, params) # this will save a csv file of the model predictions on the test set, which can be input for evaluate.py
+
+        with Live(save_dvc_exp=True) as live: # in the development stage the results are added to dvclive so that they can be tracked
+            live.log_metric('Accuracy (test)', metrics_df.loc['Accuracy', 'Metric Value'], metrics_df.loc['Accuracy', 'Metric Value'])
+            live.log_metric('BA (test)', metrics_df.loc['Balanced Accuracy Score', 'Metric Value'])
+            live.log_metric('Kappa (test)', metrics_df.loc['Cohen Kappa', 'Metric Value'])
+            live.log_metric('CCC (test)', metrics_df.loc['Lins Concordance Correlation Coefficient', 'Metric Value'])
+
+        params = yaml.safe_load(open("params.yaml"))["data"]
+
+        if params['save_test_artifacts']:
+            save_artifacts(y_test, y_pred, metrics_df, pipeline, params)
     
-    X_test, y_test = load_data('data/test_set_prepared.pkl')
-    y_pred, metrics_df = test_model(X_test, y_test, pipeline, params) # this will save a csv file of the model predictions on the test set, which can be input for evaluate.py
-
-    with Live(save_dvc_exp=True) as live: # in the development stage the results are added to dvclive so that they can be tracked
-        live.log_metric('Accuracy', metrics_df.loc['Accuracy', 'Metric Value'])
-        live.log_metric('Balanced Accuracy Score', metrics_df.loc['Balanced Accuracy Score', 'Metric Value'])
-        live.log_metric('Cohen Kappa', metrics_df.loc['Cohen Kappa', 'Metric Value'])
-        live.log_metric('Lins Concordance Correlation Coefficient', metrics_df.loc['Lins Concordance Correlation Coefficient', 'Metric Value'])
-
-    params = yaml.safe_load(open("params.yaml"))["test"]
-
-    if params['save_artifacts']:
-        save_artifacts(y_test, y_pred, metrics_df, pipeline, params)
+    else:
+        print('Test is set to False, no inference run on the test set.')
 
 if __name__ == "__main__":
     main()

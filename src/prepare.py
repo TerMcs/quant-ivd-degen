@@ -150,7 +150,7 @@ def main():
 
     participant_info = ["project_ID", "level", "pfirrmann",  "C6646Q1_98_6_2", "gender", "C6631T_BMI", "C6646C_weigth_height_007", "C6646Q1_40_1"]
 
-    params = yaml.safe_load(open("params.yaml"))["prepare"]
+    params = yaml.safe_load(open("params.yaml"))["data"]
 
     # load the main dataframe from pickle file:
     with open(params['data_file'], 'rb') as f:

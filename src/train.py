@@ -86,6 +86,10 @@ def make_pipeline(params):
             ('classifier', classifier)
             ])
     
+    else:
+        print("Model not defined")
+        return
+    
     return pipeline
 
 
@@ -138,7 +142,7 @@ def main():
     params = yaml.safe_load(open("params.yaml"))["train"]
 
     X_train, y_train = load_data('data/dev_set_prepared.pkl')
-    scores = train_model(X_train, y_train, params) # if params['test'] is True, the model will be trained on the whole dev dataset
+    scores = train_model(X_train, y_train, params) 
     
     with Live(save_dvc_exp=True) as live: # in the development stage the results are added to dvclive so that they can be tracked
         for scorer_name, scorer_scores in scores.items():
