@@ -6,12 +6,12 @@ data:
   resampling: '0270'     # "none", "0135", "0270"
   binwidth: 16    # "1", "2", "4", "8", "16", "32", "64"
   icc_cut_off: 0.95
-  feature_set: radiomics_dhi_dpsi   # radiomics_only, dhi_dpsi_only, radiomics_dhi_dpsi
+  feature_set: dhi_dpsi_only   # radiomics_only, dhi_dpsi_only, radiomics_dhi_dpsi
   variance_threshold: 0.0001
   correlation_threshold: 0
   save_test_artifacts: False
 train:
-  model: pca_svm # svm, pca_svm, pls, lr
+  model: svm # svm, pca_svm, pls, lr
   n_components: 25
   cost: 2
   svm_gamma: 0.0001

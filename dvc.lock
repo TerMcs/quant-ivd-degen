@@ -5,12 +5,12 @@ stages:
     deps:
     - path: data/dev_set_prepared.pkl
       hash: md5
-      md5: 566eb9df3d6aa173772fd55f5f476388
-      size: 3629255
+      md5: f6e246b96cb91e21b025a871a26405d9
+      size: 478856
     - path: data/test_set_prepared.pkl
       hash: md5
-      md5: a7b4632460d50047ccbe8938d5a4980c
-      size: 800026
+      md5: 7988db558dc86b36edeffbc37b1ebb59
+      size: 105475
     - path: src/train.py
       hash: md5
       md5: f82aed742bbc95eeec3490c59315a29b
@@ -18,7 +18,7 @@ stages:
     params:
       params.yaml:
         train.cost: 2
-        train.model: pca_svm
+        train.model: svm
         train.n_components: 25
         train.svm_gamma: 0.0001
         train.test: false
@@ -56,12 +56,12 @@ stages:
     deps:
     - path: data/dev_set_prepared.pkl
       hash: md5
-      md5: 566eb9df3d6aa173772fd55f5f476388
-      size: 3629255
+      md5: f6e246b96cb91e21b025a871a26405d9
+      size: 478856
     - path: data/test_set_prepared.pkl
       hash: md5
-      md5: a7b4632460d50047ccbe8938d5a4980c
-      size: 800026
+      md5: 7988db558dc86b36edeffbc37b1ebb59
+      size: 105475
     - path: src/test.py
       hash: md5
       md5: e2270e1039a8406ed0d96d64497570e3
@@ -79,7 +79,7 @@ stages:
         data.correlation_threshold: 0
         data.data_file: ../data/NFBC/radiomics/ivd/no_rotation/joined.pkl
         data.dev_ids: data/ivd_dev_set_project_ids.txt
-        data.feature_set: radiomics_dhi_dpsi
+        data.feature_set: dhi_dpsi_only
         data.icc_cut_off: 0.95
         data.icc_results: ../data/NFBC/radiomics/icc_results_ivd_all_features.csv
         data.resampling: '0270'
@@ -89,9 +89,9 @@ stages:
     outs:
     - path: data/dev_set_prepared.pkl
       hash: md5
-      md5: 566eb9df3d6aa173772fd55f5f476388
-      size: 3629255
+      md5: f6e246b96cb91e21b025a871a26405d9
+      size: 478856
     - path: data/test_set_prepared.pkl
       hash: md5
-      md5: a7b4632460d50047ccbe8938d5a4980c
-      size: 800026
+      md5: 7988db558dc86b36edeffbc37b1ebb59
+      size: 105475
