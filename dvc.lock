@@ -5,12 +5,12 @@ stages:
     deps:
     - path: data/dev_set_prepared.pkl
       hash: md5
-      md5: 510bb77198fde6ce44b02819fad26587
-      size: 5546742
+      md5: 566eb9df3d6aa173772fd55f5f476388
+      size: 3629255
     - path: data/test_set_prepared.pkl
       hash: md5
-      md5: 1e2e013afaab26308225e74d5b276121
-      size: 1222649
+      md5: a7b4632460d50047ccbe8938d5a4980c
+      size: 800026
     - path: src/train.py
       hash: md5
       md5: f82aed742bbc95eeec3490c59315a29b
@@ -19,9 +19,9 @@ stages:
       params.yaml:
         train.cost: 2
         train.model: pca_svm
-        train.n_components: 25
+        train.n_components: 45
         train.svm_gamma: 0.0001
-        train.test: false
+        train.test: true
   prepare:
     cmd: python src/prepare.py
     deps:
@@ -56,12 +56,12 @@ stages:
     deps:
     - path: data/dev_set_prepared.pkl
       hash: md5
-      md5: 510bb77198fde6ce44b02819fad26587
-      size: 5546742
+      md5: 566eb9df3d6aa173772fd55f5f476388
+      size: 3629255
     - path: data/test_set_prepared.pkl
       hash: md5
-      md5: 1e2e013afaab26308225e74d5b276121
-      size: 1222649
+      md5: a7b4632460d50047ccbe8938d5a4980c
+      size: 800026
     - path: src/test.py
       hash: md5
       md5: e2270e1039a8406ed0d96d64497570e3
@@ -71,18 +71,18 @@ stages:
     deps:
     - path: src/prepare.py
       hash: md5
-      md5: 5b9065503a024fe99b43c3ba03a7b217
-      size: 7871
+      md5: 16e0d906bdcb1712447dd58b4a031ecb
+      size: 7692
     params:
       params.yaml:
-        data.binwidth: 1
+        data.binwidth: 16
         data.correlation_threshold: 0
         data.data_file: ../data/NFBC/radiomics/ivd/no_rotation/joined.pkl
         data.dev_ids: data/ivd_dev_set_project_ids.txt
         data.feature_set: radiomics_dhi_dpsi
         data.icc_cut_off: 0.95
         data.icc_results: ../data/NFBC/radiomics/icc_results_ivd_all_features.csv
-        data.resampling: none
+        data.resampling: '0270'
         data.save_test_artifacts: false
         data.split: true
         data.test_ids: data/ivd_test_set_project_ids.txt
@@ -90,9 +90,9 @@ stages:
     outs:
     - path: data/dev_set_prepared.pkl
       hash: md5
-      md5: b722dccb40302f67bdd4d8c452c0ff8e
-      size: 3948922
+      md5: 566eb9df3d6aa173772fd55f5f476388
+      size: 3629255
     - path: data/test_set_prepared.pkl
       hash: md5
-      md5: 48a49f9feb0408bb7b5d6c4889ce8022
-      size: 870418
+      md5: a7b4632460d50047ccbe8938d5a4980c
+      size: 800026

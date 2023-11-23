@@ -4,8 +4,8 @@ data:
   dev_ids: data/ivd_dev_set_project_ids.txt # data/ivd_dev_set_project_ids.txt data/all_participants.txt
   test_ids: data/ivd_test_set_project_ids.txt
   icc_results: ../data/NFBC/radiomics/icc_results_ivd_all_features.csv
-  resampling: none       # "none", "0135", "0270"
-  binwidth: 1     # "1", "2", "4", "8", "16", "32", "64"
+  resampling: '0270'     # "none", "0135", "0270"
+  binwidth: 16    # "1", "2", "4", "8", "16", "32", "64"
   icc_cut_off: 0.95
   feature_set: radiomics_dhi_dpsi   # radiomics_only, dhi_dpsi_only, radiomics_dhi_dpsi
   variance_threshold: 0.0001
@@ -13,10 +13,10 @@ data:
   save_test_artifacts: false
 train:
   model: pca_svm # svm, pca_svm, pls, lr
-  n_components: 25
+  n_components: 45
   cost: 2
   svm_gamma: 0.0001
-  test: false
+  test: True
 
 
 
