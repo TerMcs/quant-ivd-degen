@@ -39,4 +39,7 @@ stages:
     - data/test_set_prepared.pkl
     - src/test.py
 plots:
-- dvclive/plots/images
+- dvclive/plots/metrics:
+    x: step
+metrics:
+- dvclive/metrics.json
