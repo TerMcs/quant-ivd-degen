@@ -5,7 +5,7 @@ data:
   test_ids: data/ivd_test_set_project_ids.txt
   icc_results: ../data/NFBC/radiomics/icc_results_ivd_all_features.csv
   resampling: none       # "none", "0135", "0270"
-  binwidth: 1     # "1", "2", "4", "8", "16", "32", "64"
+  binwidth: 8     # "1", "2", "4", "8", "16", "32", "64"
   icc_cut_off: 0.95
   feature_set: radiomics_dhi_dpsi   # radiomics_only, dhi_dpsi_only, radiomics_dhi_dpsi
   variance_threshold: 0.0001
