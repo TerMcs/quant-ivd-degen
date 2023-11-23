@@ -1,1 +1,12 @@
-{}
+{
+    "test_Accuracy": 0.8046281347540631,
+    "test_Macro F1 Score": 0.7853682107530364,
+    "test_Micro F1 Score": 0.8046281347540631,
+    "test_Balanced Accuracy Score": 0.7794835651034727,
+    "test_Matthews Correlation Coefficient": 0.7005124513950778,
+    "test_Macro Precision": 0.7924371878229073,
+    "test_Micro Precision": 0.8046281347540631,
+    "test_Macro Recall": 0.7794835651034727,
+    "test_Micro Recall": 0.8046281347540631,
+    "test_Cohen Kappa": 0.6999752738358754
+}
