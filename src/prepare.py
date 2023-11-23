@@ -132,14 +132,6 @@ def correlation_analysis(live, df, participant_info, correlation_threshold):
 
     return df
 
-# def chi_2_feature_selection(df, participant_info):
-    
-#     feature_df = df.drop(columns=participant_info)
-
-#     fs = SelectKBest(score_func=chi2, k='all')
-
-
-#     return df
 
 def plot_correlation_matrix(live, df, participant_info):
     
