@@ -5,6 +5,7 @@ stages:
     deps:
     - src/prepare.py
     params:
+    - data.split
     - data.data_file
     - data.dev_ids
     - data.test_ids
@@ -38,7 +39,4 @@ stages:
     - data/test_set_prepared.pkl
     - src/test.py
 plots:
-- dvclive/plots/metrics:
-    x: step
-metrics:
-- dvclive/metrics.json
+- dvclive/plots/images

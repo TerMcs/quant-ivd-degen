@@ -4,7 +4,7 @@ import pandas as pd
 import pickle
 import seaborn as sns
 from sklearn.preprocessing import StandardScaler
-from sklearn.feature_selection import VarianceThreshold
+from sklearn.feature_selection import VarianceThreshold, mutual_info_classif
 import sys
 import yaml
 
@@ -59,10 +59,8 @@ def prepare_data(data, resampling, binwidth, features):
 
 def variance_thresholding(df, threshold, participant_info):
 
-    # Separate the columns to preserve from the rest
     columns_to_preserve = [col for col in df.columns if col in participant_info]
     columns_to_remove = [col for col in df.columns if col not in participant_info]
-    # Select the columns to be processed by variance thresholding
     data_to_process = df[columns_to_remove]
 
     # # Optionally scale the data before applying the variance threshold
@@ -90,20 +88,16 @@ def correlation_analysis(live, df, participant_info, correlation_threshold):
     
     feature_df = df.drop(columns=participant_info)
 
-    # Calculate the correlation matrix
     correlation_matrix = feature_df.corr().abs()
 
-    # Apply mean centering and scaling to the features for selecting the one with greater variance
     scaler = StandardScaler()
     scaled_values = scaler.fit_transform(feature_df)
     feature_df = pd.DataFrame(data=scaled_values, columns=feature_df.columns)
 
-    # add the correlation plot to the experiment artifacts
     fig, axes = plt.subplots(dpi=100)
     sns.heatmap(correlation_matrix, annot=False, cmap='coolwarm', fmt=".2f", ax=axes)
     live.log_image("original_correlation_matrix.png", fig)
     
-    # remove the upper triangle
     mask = np.triu(np.ones(correlation_matrix.shape), k=1).astype(bool)
     correlation_matrix = correlation_matrix.mask(mask)
     
@@ -126,6 +120,11 @@ def correlation_analysis(live, df, participant_info, correlation_threshold):
         variance_i = feature_df[feature_i].var()
         variance_j = feature_df[feature_j].var()
         selected_feature = feature_i if variance_i < variance_j else feature_j
+
+        # ALTERNATIVE: use mutual information for feature selection:
+        # mutual_info_i = mutual_info_classif(feature_df[feature_i].values.reshape(-1, 1), df["pfirrmann"].values)[0]
+        # mutual_info_j = mutual_info_classif(feature_df[feature_j].values.reshape(-1, 1), df["pfirrmann"].values)[0]
+        # selected_feature = feature_i if mutual_info_i < mutual_info_j else feature_j
         
         selected_features.append(selected_feature)
 
@@ -133,6 +132,14 @@ def correlation_analysis(live, df, participant_info, correlation_threshold):
 
     return df
 
+# def chi_2_feature_selection(df, participant_info):
+    
+#     feature_df = df.drop(columns=participant_info)
+
+#     fs = SelectKBest(score_func=chi2, k='all')
+
+
+#     return df
 
 def plot_correlation_matrix(live, df, participant_info):
     
@@ -152,27 +159,28 @@ def main():
 
     params = yaml.safe_load(open("params.yaml"))["data"]
 
-    # load the main dataframe from pickle file:
+    # The main dataframe has been stored as a pickle file 
     with open(params['data_file'], 'rb') as f:
         data = pickle.load(f)
 
-    # select the features to be used in the model:
     features = filter_by_icc(params['icc_results'], 
                                 params['icc_cut_off'], 
                                 params['feature_set'],
                                 participant_info
                                 )
-    # prepare the data:
     df = prepare_data(data, 
                         params['resampling'],
                         params['binwidth'], 
                         features
                         )
 
-    # seaparate dev and test set here to prevent data leakage
-    dev = df[df['project_ID'].isin(get_ids(params['dev_ids']))]
+    if params['split']:
+        # split off the dev set before further processing to avoid data leakage
+        dev = df[df['project_ID'].isin(get_ids(params['dev_ids']))]
+    else:
+        print('************* NOTE: no split created, dev_set_prepared.pkl will contain all participants. **********')
+        dev = df
 
-    # remove columns with low variance:
     dev = variance_thresholding(dev, 
                                 params['variance_threshold'],
                                 participant_info
@@ -189,13 +197,11 @@ def main():
                                       )
 
 
-        # plot the correlation matrix:
         plot_correlation_matrix(live, 
                                 dev,
                                 participant_info
                                 )
 
-    # save the dataframe:
     with open('data/dev_set_prepared.pkl', 'wb') as f:
         pickle.dump(dev, f)
 
