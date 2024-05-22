@@ -3,9 +3,10 @@ import numpy as np
 import pandas as pd
 import pickle
 import seaborn as sns
-from sklearn.base import TransformerMixin
+from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin 
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.decomposition import PCA
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, balanced_accuracy_score, cohen_kappa_score, precision_score, recall_score, f1_score, matthews_corrcoef, roc_auc_score, make_scorer
 from sklearn.model_selection import cross_validate
@@ -31,7 +32,7 @@ def load_data(file_path):
 
     
 class PLSSelector(TransformerMixin):
-    def __init__(self, n_components=45):
+    def __init__(self, n_components=5):
         self.n_components = n_components
         self.pls = PLSRegression(n_components=n_components, scale=False, max_iter=500, tol=1e-06) 
 
@@ -49,13 +50,13 @@ def make_pipeline(params):
     if params['model'] == 'pca_svm':
         scaler = StandardScaler()
         pca = PCA(n_components=params['n_components'])
-        classifier = LogisticRegression(multi_class='ovr', max_iter=1000)
+        lr = LogisticRegression(multi_class='ovr', max_iter=1000)
         svm = SVC(kernel='linear', C=params['cost'], gamma=params['svm_gamma'], random_state=42)
         pipeline = Pipeline([
             ('scaler', scaler),
             ('pca', pca),
             ('classifier', svm),
-            # ('classifier', classifier)
+            # ('classifier', lr)
             ])
         
     elif params['model'] == 'svm':
@@ -69,21 +70,24 @@ def make_pipeline(params):
     elif params['model'] == 'pls':
         scaler = StandardScaler()
         pls = PLSSelector(n_components=params['n_components'])
-        classifier = LogisticRegression(multi_class='ovr', max_iter=1000)
+        lr = LogisticRegression(multi_class='ovr', max_iter=1000)
         svm = SVC(kernel='linear', C=params['cost'], gamma=params['svm_gamma'], random_state=42)
+        random_forest = RandomForestClassifier(n_estimators=100, max_depth=2, random_state=42)
         pipeline = Pipeline([
             ('scaler', scaler),
             ('pls', pls),
             ('classifier', svm),
-            # ('classifier', classifier)
+            # ('classifier', lr),
+            # ('classifier', random_forest)
             ])
+
     
     elif params['model'] == 'lr':
         scaler = StandardScaler()
-        classifier = LogisticRegression(multi_class='ovr', max_iter=1000, C=params['cost'], random_state=42)
+        lr = LogisticRegression(multi_class='ovr', max_iter=1000, C=params['cost'], random_state=42)
         pipeline = Pipeline([
             ('scaler', scaler),
-            ('classifier', classifier)
+            ('classifier', lr)
             ])
     
     else:
@@ -122,7 +126,7 @@ def train_model(X, y, params):
     pipeline = make_pipeline(params)
 
     if params['model'] == 'pls':
-        y = prepare_y_for_pls(y)
+        # y = prepare_y_for_pls(y)
         scorers = get_scorers()
         scores = cross_validate(pipeline, X, y, cv=5, scoring=scorers)
         scores.pop('fit_time')

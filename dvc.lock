@@ -5,23 +5,23 @@ stages:
     deps:
     - path: data/dev_set_prepared.pkl
       hash: md5
-      md5: f6e246b96cb91e21b025a871a26405d9
-      size: 478856
+      md5: 1b93f335effda206f7897529004318f8
+      size: 17520426
     - path: data/test_set_prepared.pkl
       hash: md5
-      md5: 7988db558dc86b36edeffbc37b1ebb59
-      size: 105475
+      md5: cdd6d4972ae685b208f07951e7fdd3d7
+      size: 3177658
     - path: src/train.py
       hash: md5
-      md5: f82aed742bbc95eeec3490c59315a29b
-      size: 5081
+      md5: 79b1b9d183344d8da67c44f22a4848ab
+      size: 5260
     params:
       params.yaml:
         train.cost: 2
-        train.model: svm
-        train.n_components: 45
+        train.model: pls
+        train.n_components: 5
         train.svm_gamma: 0.0001
-        train.test: true
+        train.test: false
   prepare:
     cmd: python src/prepare.py
     deps:
@@ -56,12 +56,12 @@ stages:
     deps:
     - path: data/dev_set_prepared.pkl
       hash: md5
-      md5: f6e246b96cb91e21b025a871a26405d9
-      size: 478856
+      md5: 1b93f335effda206f7897529004318f8
+      size: 17520426
     - path: data/test_set_prepared.pkl
       hash: md5
-      md5: 7988db558dc86b36edeffbc37b1ebb59
-      size: 105475
+      md5: cdd6d4972ae685b208f07951e7fdd3d7
+      size: 3177658
     - path: src/test.py
       hash: md5
       md5: e2270e1039a8406ed0d96d64497570e3
@@ -71,28 +71,28 @@ stages:
     deps:
     - path: src/prepare.py
       hash: md5
-      md5: 16e0d906bdcb1712447dd58b4a031ecb
-      size: 7692
+      md5: 353cdda609ab69ba877aef6e645f8913
+      size: 8009
     params:
       params.yaml:
         data.binwidth: 16
         data.correlation_threshold: 0
         data.data_file: ../data/NFBC/radiomics/ivd/no_rotation/joined.pkl
         data.dev_ids: data/ivd_dev_set_project_ids.txt
-        data.feature_set: dhi_dpsi_only
+        data.feature_set: radiomics_dhi_dpsi
         data.icc_cut_off: 0.95
         data.icc_results: ../data/NFBC/radiomics/icc_results_ivd_all_features.csv
         data.resampling: '0270'
         data.save_test_artifacts: false
-        data.split: true
+        data.split: false
         data.test_ids: data/ivd_test_set_project_ids.txt
-        data.variance_threshold: 0.0001
+        data.variance_threshold: 0
     outs:
     - path: data/dev_set_prepared.pkl
       hash: md5
-      md5: f6e246b96cb91e21b025a871a26405d9
-      size: 478856
+      md5: 1b93f335effda206f7897529004318f8
+      size: 17520426
     - path: data/test_set_prepared.pkl
       hash: md5
-      md5: 7988db558dc86b36edeffbc37b1ebb59
-      size: 105475
+      md5: cdd6d4972ae685b208f07951e7fdd3d7
+      size: 3177658

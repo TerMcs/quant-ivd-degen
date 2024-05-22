@@ -147,7 +147,17 @@ def plot_correlation_matrix(live, df, participant_info):
 
 def main():
 
-    participant_info = ["project_ID", "level", "pfirrmann",  "C6646Q1_98_6_2", "gender", "C6631T_BMI", "C6646C_weigth_height_007", "C6646Q1_40_1"]
+    participant_info = [
+                        "project_ID",
+                        "level",
+                        "pfirrmann",
+                        "C6646Q1_98_6_2", # Pain
+                        "gender",
+                        "C6631T_BMI", # 31 year FU BMI
+                        "C6646C_weigth_height_007", # 46 year FU BMI
+                        "C6646Q1_40_1", # smoking
+                        "total_minutes"
+                        ]
 
     params = yaml.safe_load(open("params.yaml"))["data"]
 

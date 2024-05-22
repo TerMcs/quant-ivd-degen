@@ -1,4 +1,3 @@
-# Type dvc-help in this file and hit enter to get more information on how the extension can help to setup pipelines
 stages:
   data:
     cmd: python src/prepare.py
@@ -39,7 +38,4 @@ stages:
     - data/test_set_prepared.pkl
     - src/test.py
 plots:
-- dvclive/plots/metrics:
-    x: step
-metrics:
-- dvclive/metrics.json
+- dvclive/plots/images
